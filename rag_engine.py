@@ -1,12 +1,12 @@
 import faiss
 import numpy as np
 from groq import Groq
-from pypdf import PDFReader
+from pypdf import PdfReader
 from sentence_transformers import SentenceTransformer
 
 #load pdfs
 def load_pdf (pdf_path):
-  reader = PDFReaders(str(pdf_path))
+  reader = PdfReaders(str(pdf_path))
   mypages = [i.extract_text() or "" for i in reader.pages]
   full_text = "\n.join(mypages).strip()
   if not full_text:
@@ -32,7 +32,7 @@ def build_vectors (chunks, model_name = "all-MiniLM-L6-v2"):
   embed_model = SentenceTransformer(model_name)
   embed_vectors = embed_model.encode(chunks, convert_to_numpy = True)
   faiss.normalize_L2(embed_vectors)
-  index = faiss.IndexFlatIp(embed_vectors.shape[1])
+  index = faiss.IndexFlatIP(embed_vectors.shape[1])
   index.add(embed_vectors)
   return index, embed_model
 
@@ -40,8 +40,8 @@ def build_vectors (chunks, model_name = "all-MiniLM-L6-v2"):
 def load_base (pdf_path = "01_College_Information.pdf"):
   full_text = load_pdf(pdf_path)
   chunks = create_chunks(full_text)
-  embed_model ,index = buil_vectors(chunks)
-  return embed_model, chunks, index
+  index, embed_model = buil_vectors(chunks)
+  return index, embed_model, chunks
 
 #retrive
 def retrive_content (question, embed_model, chunks, index, num_chunks=3):
@@ -51,10 +51,10 @@ def retrive_content (question, embed_model, chunks, index, num_chunks=3):
     raise ValueError("Request atleast one or more chunks")
   query_embed = embed_model.encode([question], convert_to_numpy=True)
   faiss.normalize_L2(query_embed)
-  sim_scores, vec_indices = index.search(query_embed,min(num_chunks, len(chunks)))
+  sim_scores, vec_indices = index.search(query_embed, min(num_chunks, len(chunks)))
   background = ""
   for i in vec_indices[0]:
-    if i!=-1:
+    if i! = -1:
       background +=chunks[i]+ "\n\n"
   return background
 
