@@ -28,8 +28,10 @@ if question:
     st.wrie(question)
   with.st.chat_message("assistant"):
     with st.spinner("asking RAG for answer"):
-      answer = ask_rag(question, embed_model, chunks, index, api_key = my_key, num_chunks)      #heart of progrM
+      answer = ask_rag(question, embed_model, chunks, index, api_key = my_key)      #heart of progrM
       st.write(answer)
+      st.session_state.chat_hist.append(
+        {"role" : "assistant" , "content" : answer})
 
 if st.button("Clear chat"):
 st.session_state.chat_hist []
