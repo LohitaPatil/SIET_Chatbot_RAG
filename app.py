@@ -5,6 +5,8 @@ st.title("SIET-Chatbot")
 st.caption("Ask anything about college infprmation")
 st.caption("Created by lohita")
 
+my_key = st.secrets("GROQ_API_KEY")
+
 @st.cache_resource
 def intiate_rag():
   return load_base("01_College_Information.pdf")
@@ -26,4 +28,11 @@ if question:
     st.wrie(question)
   with.st.chat_message("assistant"):
     with st.spinner("asking RAG for answer"):
-      answer = ask_rag
+      answer = ask_rag(question, embed_model, chunks, index, api_key = my_key, num_chunks)      #heart of progrM
+      st.write(answer)
+
+if st.button("Clear chat"):
+st.session_state.chat_hist []
+st.return()
+      
+      
