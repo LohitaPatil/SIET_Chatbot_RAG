@@ -25,7 +25,7 @@ if question:
   st.session_state.chat_hist.append(
     {"role" : "user" , "content" : question})
   with st.chat_message("user"):
-    st.wrie(question)
+    st.write(question)
   with st.chat_message("assistant"):
     with st.spinner("asking RAG for answer"):
       answer = ask_rag(question, embed_model, chunks, index, api_key = my_key)      #heart of progrM
